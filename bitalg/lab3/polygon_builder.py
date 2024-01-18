@@ -4,14 +4,13 @@ import json
 
 
 class PolygonBuilder:
-    def __init__(self, file_name=None, load=False):#, triangulation_func=None):
+    def __init__(self, file_name=None, load=False):
         self.make_new_plot()
 
-        self.file_name = file_name if file_name is not None else self.get_new_filename()
+        self.file_name = file_name or self.get_new_filename()
 
         if load:
             self.load_polygon()
-        #self.triangulation_func = triangulation_func
 
     def get_new_filename(self):
         polygons_file_list = [f.split(".")[0] for f in listdir(".") if f.split(".")[0].split("-")[0] == "polygon"]
@@ -28,23 +27,18 @@ class PolygonBuilder:
         ax.set_ylim([-5, 5])
         line, = ax.plot([0], [0])
         point, = ax.plot([0], [0], '.')
-        #diag, = ax.plot([0], [0], 'r')
 
         self.line = line
         self.point = point
-        #self.diag = diag
-        #self.diag.set_visible(False)
 
         self.point_xs = []
         self.point_ys = []
         self.line_xs = []
         self.line_ys = []
-        #self.diagonals_lines = []
 
         line.figure.canvas.mpl_connect('button_press_event', self.on_press_event)
         line.figure.canvas.mpl_connect('key_press_event', self.on_key_press_event)
 
-        #self.triangulation_visible = False
 
     def on_press_event(self, event):
         if event.inaxes != self.line.axes:
@@ -54,7 +48,6 @@ class PolygonBuilder:
         self.point_ys.append(event.ydata)
 
         self.draw_plot_points()
-        #self.draw_plot_diagonals()
 
         if len(self.line_xs) == 0:
             self.line_xs = 2*[event.xdata]
@@ -77,30 +70,17 @@ class PolygonBuilder:
         self.line.set_data(self.line_xs, self.line_ys)
         self.line.figure.canvas.draw()
 
-    #def draw_plot_diagonals(self):
-    #    if not self.triangulation_visible:
-    #        self.diagonals_lines.clear()
-    #        self.diag.set_visible(False)
-    #        plt.draw()
-    #    elif len(self.point_xs) > 3:
-    #        self.add_triangulation()
-    #        self.diag.set_visible(True)
-    #        self.diag.set_data(*list(zip(*self.diagonals_lines)))
-    #        self.diag.figure.canvas.draw()
 
     def on_key_press_event(self, event):
         if event.key == 'c':
             self.clear_polygon()
         if event.key == 'u':
             self.clear_last_point()
-        #if event.key == 'v':
-        #    self.triangulation_visible = not self.triangulation_visible
         if event.key == 's':
             self.save_polygon()
 
         self.draw_plot_lines()
         self.draw_plot_points()
-        #self.draw_plot_diagonals()
 
     def get_points(self):
         return list(zip(self.point_xs, self.point_ys))
@@ -145,21 +125,6 @@ class PolygonBuilder:
 
     def show(self):
         plt.show()
-
-    #def add_triangulation(self):
-    #    if len(self.point_xs) < 4:
-    #        return
-
-    #    self.diagonals_lines = self.get_triangulation()
-
-    #def get_triangulation(self):
-    #    if self.triangulation_func is None:
-    #        return
-
-    #    points = self.get_points()
-
-    #    self.diagonals_lines_ix = self.triangulation_func(points)
-    #    return [[(self.point_xs[i1], self.point_xs[i2]), (self.point_ys[i1], self.point_ys[i2])] for i1, i2 in self.diagonals_lines_ix]
 
     def get_polygon(self):
         return self.get_points()

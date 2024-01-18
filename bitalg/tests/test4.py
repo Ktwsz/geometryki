@@ -1,10 +1,4 @@
-import os
-
-from bitalg.tests.test_core import TestCore #, get_test_path
-
-def get_test_path(lab_no, task_no, test_no):
-    return f"../tests/test{lab_no}_tests/task{task_no}/test_{lab_no}_{task_no}_{test_no}"
-
+from .test_core import TestCore, get_test_path
 
 class Point:
     def __init__(self, x_cord, y_cord, eps):
@@ -156,7 +150,8 @@ class Test(TestCore):
             else:
                 point, id1, id2 = intersection[0], intersection[1], intersection[2]
                 point = Point(point[0], point[1], eps)
-            output_dict[point] = (min(id1, id2), max(id1, id2))
+            key = (min(id1, id2), max(id1, id2))
+            output_dict[key] = point#point] = (min(id1, id2), max(id1, id2))
         return output_dict
 
     def task3_fun(self, test_no, func, eps):
